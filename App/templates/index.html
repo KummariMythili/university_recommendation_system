@@ -1,120 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>🎓 University Recommendation System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main_css.css') }}">
+    <title>🎓 University Admission Predictor</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 40px;
+        }
+        .container {
+            max-width: 500px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: auto;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
             color: #333;
         }
-
-        .card {
-            background: #ffffff;
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .card h2 {
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
         label {
-            margin-top: 12px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #555;
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
         }
-
-        input {
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            font-size: 14px;
+        input[type="number"] {
             width: 100%;
-            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
         }
-
-        button {
-            margin-top: 25px;
+        input[type="submit"] {
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
             padding: 12px;
             border: none;
-            border-radius: 10px;
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
+            width: 100%;
             font-size: 16px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
+        .result, .inputs-display {
+            margin-top: 25px;
+            background-color: #e6ffe6;
+            padding: 15px;
+            border-left: 5px solid #28a745;
         }
-
-        h3 {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #222;
+        .inputs-display ul {
+            list-style: none;
+            padding-left: 0;
         }
-
-        @media (max-width: 600px) {
-            .card {
-                padding: 30px 20px;
-            }
+        .inputs-display li {
+            margin-bottom: 6px;
         }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="container">
         <h2>🎓 University Admission Predictor</h2>
-        <form method="POST" action="/predict">
+        <form action="/predict" method="post">
+            <label>🎯 GRE Score (Graduate Record Examination)</label>
+            <input type="number" name="gre_score" step="1" required placeholder="Enter GRE Score (e.g., 320)">
 
-            <label for="gre_score">🎯 GRE Score (Graduate Record Examination)</label>
-            <input type="number" name="gre_score" placeholder="Enter GRE Score (e.g., 320)" step="any" required>
+            <label>📝 TOEFL Score (Test of English as a Foreign Language)</label>
+            <input type="number" name="toefl_score" step="1" required placeholder="Enter TOEFL Score (e.g., 110)">
 
-            <label for="toefl_score">📝 TOEFL Score (Test of English as a Foreign Language)</label>
-            <input type="number" name="toefl_score" placeholder="Enter TOEFL Score (e.g., 110)" step="any" required>
+            <label>🏫 University Rating (1-5)</label>
+            <input type="number" name="university_rating" step="1" min="1" max="5" required placeholder="Enter Rating (1–5)">
 
-            <label for="university_rating">🏫 University Rating (1-5)</label>
-            <input type="number" name="university_rating" placeholder="Enter University Rating (1-5)" step="any" required>
+            <label>🗒️ Statement of Purpose (SOP) Strength (1-5)</label>
+            <input type="number" name="sop" step="0.5" min="1" max="5" required placeholder="Enter SOP Score (1–5)">
 
-            <label for="sop">🗒️ Statement of Purpose (SOP) Strength (1-5)</label>
-            <input type="number" name="sop" placeholder="Enter SOP Rating (1-5)" step="any" required>
+            <label>📄 Letter of Recommendation (LOR) Strength (1-5)</label>
+            <input type="number" name="lor" step="0.5" min="1" max="5" required placeholder="Enter LOR Score (1–5)">
 
-            <label for="lor">📄 Letter of Recommendation (LOR) Strength (1-5)</label>
-            <input type="number" name="lor" placeholder="Enter LOR Rating (1-5)" step="any" required>
+            <label>🎓 CGPA (Cumulative GPA)</label>
+            <input type="number" name="cgpa" step="0.01" min="0" max="10" required placeholder="Enter CGPA (e.g., 8.6)">
 
-            <label for="cgpa">🎓 CGPA (Cumulative Grade Point Average)</label>
-            <input type="number" name="cgpa" placeholder="Enter CGPA (e.g., 8.5)" step="any" required>
+            <label>🔬 Research Experience (1 = Yes, 0 = No)</label>
+            <input type="number" name="research" step="1" min="0" max="1" required placeholder="Enter 1 (Yes) or 0 (No)">
 
-            <label for="research">🔬 Research Experience (1 = Yes, 0 = No)</label>
-            <input type="number" name="research" placeholder="Enter 1 (Yes) or 0 (No)" step="any" required>
-
-            <button type="submit">🚀 Predict Admission Chance</button>
+            <input type="submit" value="🚀 Predict Admission Chance">
         </form>
 
-        <h3>{{ prediction_text }}</h3>
+        {% if prediction_text %}
+        <div class="result">
+            <strong>{{ prediction_text }}</strong>
+        </div>
+        {% endif %}
+
+        {% if request.method == 'POST' %}
+        <div class="inputs-display">
+            <h4>📝 Inputs You Provided:</h4>
+            <ul>
+                <li><strong>GRE Score:</strong> {{ request.form.gre_score }}</li>
+                <li><strong>TOEFL Score:</strong> {{ request.form.toefl_score }}</li>
+                <li><strong>University Rating:</strong> {{ request.form.university_rating }}</li>
+                <li><strong>SOP:</strong> {{ request.form.sop }}</li>
+                <li><strong>LOR:</strong> {{ request.form.lor }}</li>
+                <li><strong>CGPA:</strong> {{ request.form.cgpa }}</li>
+                <li><strong>Research:</strong> {{ request.form.research }}</li>
+            </ul>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>
