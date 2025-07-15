@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
-import numpy as np
 import pandas as pd
+import numpy as np
 import joblib
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # ✅ Fetch form inputs
+        # ✅ Retrieve form data from HTML
         gre_score = float(request.form['gre_score'])
         toefl_score = float(request.form['toefl_score'])
         university_rating = float(request.form['university_rating'])
@@ -25,24 +25,26 @@ def predict():
         cgpa = float(request.form['cgpa'])
         research = float(request.form['research'])
 
-        # ✅ Prepare DataFrame with feature names used during training
+        # ✅ Create DataFrame with input features
         feature_names = ['GRE_Score', 'TOEFL_Score', 'University_Rating', 'SOP', 'LOR', 'CGPA', 'Research']
-        input_data = pd.DataFrame([[gre_score, toefl_score, university_rating, sop, lor, cgpa, research]], columns=feature_names)
+        input_data = pd.DataFrame([[gre_score, toefl_score, university_rating, sop, lor, cgpa, research]],
+                                  columns=feature_names)
 
-        # ✅ Apply the scaler
+        # ✅ Scale input using saved scaler
         scaled_input = scaler.transform(input_data)
 
-        # ✅ Make prediction
+        # ✅ Predict admission chance
         prediction = model.predict(scaled_input)[0]
-        prediction = round(prediction, 2)
+        prediction = round(prediction * 100, 2)  # convert to percentage
 
-        # ✅ Send prediction and inputs to HTML
         return render_template('index.html',
-                               prediction_text=f"🎯 Predicted Chance of Admit: {prediction}",
+                               prediction_text=f"{prediction}%",
                                request=request)
 
     except Exception as e:
-        return render_template('index.html', prediction_text=f"❌ Error: {e}", request=request)
+        return render_template('index.html',
+                               prediction_text=f"❌ Error: {e}",
+                               request=request)
 
 if __name__ == '__main__':
     app.run(debug=True)
